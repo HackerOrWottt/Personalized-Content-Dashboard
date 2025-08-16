@@ -5,10 +5,10 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { addToFavorites, removeFromFavorites } from '@/store/slices/userSlice'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ContentItem } from '@/types'
-import { formatRelativeTime, getContentTypeIcon, getContentTypeColor, truncateText } from '@/utils'
+import { formatRelativeTime, getContentTypeIcon } from '@/utils'
 
 interface ContentCardProps {
   item: ContentItem
@@ -36,17 +36,13 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
     }
   }
 
-  const handleImageError = () => {
-    setImageError(true)
-  }
-
   return (
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className={isDraggable ? 'cursor-grab active:cursor-grabbing' : ''}
     >
-      <Card className="h-full flex flex-col overflow-hidden group">
+      <Card className="h-full flex flex-col overflow-hidden group cursor-pointer" onClick={handleCardClick}>
         {/* Image */}
         <div className="relative h-48 bg-dark-bg overflow-hidden">
           {item.imageUrl && !imageError ? (
@@ -55,7 +51,7 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
               alt={item.title}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
-              onError={handleImageError}
+              onError={() => setImageError(true)}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
@@ -68,7 +64,7 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
           
           {/* Content Type Badge */}
           <div className="absolute top-3 left-3">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getContentTypeColor(item.type)}`}>
+            <span className="px-2 py-1 rounded-full text-xs font-medium text-white bg-accent-red">
               {item.type.toUpperCase()}
             </span>
           </div>
@@ -102,37 +98,21 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
         </div>
 
         {/* Content */}
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg line-clamp-2 group-hover:text-accent-red transition-colors duration-200">
-            {truncateText(item.title, 80)}
-          </CardTitle>
-          {item.author && (
-            <p className="text-sm text-dark-muted">by {item.author}</p>
-          )}
-        </CardHeader>
-
-        <CardContent className="flex-1 pb-2">
-          <CardDescription className="line-clamp-3">
-            {truncateText(item.description, 150)}
-          </CardDescription>
+        <div className="p-4 flex-1 flex flex-col">
+          <h3 className="text-lg font-semibold text-dark-text mb-2 line-clamp-2 group-hover:text-accent-red transition-colors duration-200">
+            {item.title}
+          </h3>
           
-          {/* Tags */}
-          {item.tags && item.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-3">
-              {item.tags.slice(0, 3).map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-dark-bg text-dark-muted text-xs rounded-full"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
+          {item.author && (
+            <p className="text-sm text-dark-muted mb-2">by {item.author}</p>
           )}
-        </CardContent>
 
-        <CardFooter className="pt-0">
-          <div className="flex items-center justify-between w-full">
+          <p className="text-dark-muted text-sm line-clamp-3 flex-1 mb-4">
+            {item.description}
+          </p>
+          
+          {/* Footer */}
+          <div className="flex items-center justify-between mt-auto">
             <div className="flex items-center space-x-2 text-sm text-dark-muted">
               <span>{item.source}</span>
               <span>•</span>
@@ -154,7 +134,10 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleCardClick}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleCardClick()
+                }}
                 className="text-accent-red hover:bg-accent-red hover:text-white"
               >
                 {item.type === 'movie' ? 'Watch' : 'Read'}
@@ -164,7 +147,7 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
               </Button>
             </div>
           </div>
-        </CardFooter>
+        </div>
       </Card>
     </motion.div>
   )
