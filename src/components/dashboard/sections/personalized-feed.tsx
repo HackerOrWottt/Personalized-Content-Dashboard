@@ -1,13 +1,14 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { useGetTopHeadlinesQuery } from '@/store/api/newsApi'
 import { useGetTrendingMoviesQuery } from '@/store/api/tmdbApi'
 import { useGetSocialPostsQuery } from '@/store/api/socialApi'
 import { setPersonalizedFeed, setLoading } from '@/store/slices/contentSlice'
-import { ContentCard } from '../content-card'
+import { addNotification } from '@/store/slices/uiSlice'
+import { DraggableContentGrid } from '../draggable-content-grid'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Button } from '@/components/ui/button'
 
@@ -15,6 +16,7 @@ export function PersonalizedFeed() {
   const dispatch = useAppDispatch()
   const preferences = useAppSelector((state) => state.user.preferences)
   const { personalizedFeed, isLoading } = useAppSelector((state) => state.content)
+  const [enableDragDrop, setEnableDragDrop] = useState(false)
 
   // Fetch data from multiple APIs
   const { data: newsData, isLoading: newsLoading } = useGetTopHeadlinesQuery({
@@ -50,19 +52,12 @@ export function PersonalizedFeed() {
     }
   }, [dispatch, newsData, moviesData, socialData])
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+  const handleReorder = (newOrder: string[]) => {
+    dispatch(addNotification({
+      id: 'reorder-success',
+      type: 'success',
+      message: 'Feed reordered successfully!'
+    }))
   }
 
   if (isLoading && personalizedFeed.length === 0) {
@@ -98,8 +93,8 @@ export function PersonalizedFeed() {
         </motion.p>
       </div>
 
-      {/* Refresh Button */}
-      <div className="mb-6">
+      {/* Controls */}
+      <div className="mb-6 flex flex-wrap gap-3">
         <Button
           onClick={() => window.location.reload()}
           variant="outline"
@@ -112,26 +107,66 @@ export function PersonalizedFeed() {
         >
           Refresh Feed
         </Button>
+
+        <Button
+          onClick={() => setEnableDragDrop(!enableDragDrop)}
+          variant={enableDragDrop ? 'primary' : 'outline'}
+          leftIcon={
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+          }
+        >
+          {enableDragDrop ? 'Disable' : 'Enable'} Drag & Drop
+        </Button>
       </div>
+
+      {/* Drag & Drop Instructions */}
+      {enableDragDrop && (
+        <motion.div
+          className="mb-6 p-4 bg-accent-red bg-opacity-10 border border-accent-red rounded-lg"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+        >
+          <div className="flex items-center space-x-2 text-accent-red">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="font-medium">Drag & Drop Mode Active</p>
+          </div>
+          <p className="text-sm text-dark-muted mt-1">
+            Click and drag any content card to reorder your feed. Changes are saved automatically.
+          </p>
+        </motion.div>
+      )}
 
       {/* Content Grid */}
       {personalizedFeed.length > 0 ? (
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {personalizedFeed.map((item, index) => (
-            <motion.div
-              key={item.id}
-              variants={itemVariants}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-            >
-              <ContentCard item={item} />
-            </motion.div>
-          ))}
-        </motion.div>
+        enableDragDrop ? (
+          <DraggableContentGrid 
+            items={personalizedFeed} 
+            onReorder={handleReorder}
+          />
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ staggerChildren: 0.1 }}
+          >
+            {personalizedFeed.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+              >
+                <ContentCard item={item} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )
       ) : (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📰</div>
