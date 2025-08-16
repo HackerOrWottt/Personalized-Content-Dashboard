@@ -6,7 +6,6 @@ import { addNotification } from '@/store/slices/uiSlice'
 import { DashboardHeader } from './header'
 import { DashboardSidebar } from './sidebar'
 import { DashboardContent } from './content'
-import { SettingsModal } from './settings-modal'
 
 export function Dashboard() {
   const dispatch = useAppDispatch()
@@ -36,9 +35,6 @@ export function Dashboard() {
           <DashboardContent />
         </main>
       </div>
-
-      {/* Modals */}
-      <SettingsModal isOpen={settingsModalOpen} />
     </div>
   )
 }
