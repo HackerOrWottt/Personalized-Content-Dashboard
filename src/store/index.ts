@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import { combineReducers } from '@reduxjs/toolkit'
 
 import { newsApi } from './api/newsApi'
@@ -9,6 +8,25 @@ import { socialApi } from './api/socialApi'
 import userSlice from './slices/userSlice'
 import contentSlice from './slices/contentSlice'
 import uiSlice from './slices/uiSlice'
+
+// Create storage only on client side
+const createNoopStorage = () => {
+  return {
+    getItem(_key: string) {
+      return Promise.resolve(null)
+    },
+    setItem(_key: string, value: any) {
+      return Promise.resolve(value)
+    },
+    removeItem(_key: string) {
+      return Promise.resolve()
+    },
+  }
+}
+
+const storage = typeof window !== 'undefined' 
+  ? require('redux-persist/lib/storage').default 
+  : createNoopStorage()
 
 const persistConfig = {
   key: 'root',
@@ -32,7 +50,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(
       newsApi.middleware,
