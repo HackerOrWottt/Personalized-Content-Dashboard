@@ -1,0 +1,132 @@
+'use client'
+
+import { motion } from 'framer-motion'
+import { useAppSelector } from '@/store/hooks'
+import { ContentCard } from '../content-card'
+import { Button } from '@/components/ui/button'
+
+export function FavoritesSection() {
+  const favorites = useAppSelector((state) => state.user.favorites)
+  const { personalizedFeed } = useAppSelector((state) => state.content)
+
+  // Filter content to show only favorites
+  const favoriteContent = personalizedFeed.filter(item => favorites.includes(item.id))
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  }
+
+  return (
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <motion.h1
+          className="text-3xl font-bold text-dark-text mb-2"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          ❤️ Your Favorites
+        </motion.h1>
+        <motion.p
+          className="text-dark-muted"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          Content you've saved for later ({favorites.length} items)
+        </motion.p>
+      </div>
+
+      {/* Favorites Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="bg-dark-surface p-4 rounded-lg border border-dark-border">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-red-gradient rounded-lg flex items-center justify-center">
+              <span className="text-white text-xl">❤️</span>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-dark-text">{favorites.length}</p>
+              <p className="text-sm text-dark-muted">Total Favorites</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-dark-surface p-4 rounded-lg border border-dark-border">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+              <span className="text-white text-xl">📰</span>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-dark-text">
+                {favoriteContent.filter(item => item.type === 'news').length}
+              </p>
+              <p className="text-sm text-dark-muted">News Articles</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-dark-surface p-4 rounded-lg border border-dark-border">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+              <span className="text-white text-xl">🎬</span>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-dark-text">
+                {favoriteContent.filter(item => item.type === 'movie').length}
+              </p>
+              <p className="text-sm text-dark-muted">Movies</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Grid */}
+      {favoriteContent.length > 0 ? (
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {favoriteContent.map((item, index) => (
+            <motion.div
+              key={item.id}
+              variants={itemVariants}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+            >
+              <ContentCard item={item} />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">❤️</div>
+          <h3 className="text-xl font-semibold text-dark-text mb-2">No favorites yet</h3>
+          <p className="text-dark-muted mb-4">
+            Start adding content to your favorites by clicking the heart icon on any content card.
+          </p>
+          <Button
+            onClick={() => {
+              // Navigate to feed section
+              window.location.hash = '#feed'
+            }}
+          >
+            Browse Content
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
