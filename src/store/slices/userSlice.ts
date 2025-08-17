@@ -117,7 +117,7 @@ const userSlice = createSlice({
     initializeAuth: (state) => {
       // Initialize demo account
       initializeDemoAccount()
-      
+
       // Check if user was previously logged in
       if (typeof window !== 'undefined') {
         try {
@@ -126,6 +126,12 @@ const userSlice = createSlice({
             const profile = JSON.parse(savedProfile)
             state.profile = profile
             state.isAuthenticated = true
+
+            // Load user-specific data
+            const userData = getUserData(profile.email)
+            state.favorites = userData.favorites
+            state.searchHistory = userData.searchHistory
+            state.preferences = userData.preferences
           }
         } catch (error) {
           console.log('Error loading saved profile:', error)
@@ -134,14 +140,29 @@ const userSlice = createSlice({
     },
     updatePreferences: (state, action: PayloadAction<Partial<UserPreferences>>) => {
       state.preferences = { ...state.preferences, ...action.payload }
+
+      // Save to user-specific storage
+      if (state.profile?.email) {
+        saveUserData(state.profile.email, { preferences: state.preferences })
+      }
     },
     addToFavorites: (state, action: PayloadAction<string>) => {
       if (!state.favorites.includes(action.payload)) {
         state.favorites.push(action.payload)
+
+        // Save to user-specific storage
+        if (state.profile?.email) {
+          saveUserData(state.profile.email, { favorites: state.favorites })
+        }
       }
     },
     removeFromFavorites: (state, action: PayloadAction<string>) => {
       state.favorites = state.favorites.filter(id => id !== action.payload)
+
+      // Save to user-specific storage
+      if (state.profile?.email) {
+        saveUserData(state.profile.email, { favorites: state.favorites })
+      }
     },
     addToSearchHistory: (state, action: PayloadAction<string>) => {
       const query = action.payload.trim()
@@ -149,10 +170,20 @@ const userSlice = createSlice({
         state.searchHistory.unshift(query)
         // Keep only last 10 searches
         state.searchHistory = state.searchHistory.slice(0, 10)
+
+        // Save to user-specific storage
+        if (state.profile?.email) {
+          saveUserData(state.profile.email, { searchHistory: state.searchHistory })
+        }
       }
     },
     clearSearchHistory: (state) => {
       state.searchHistory = []
+
+      // Save to user-specific storage
+      if (state.profile?.email) {
+        saveUserData(state.profile.email, { searchHistory: [] })
+      }
     },
     toggleDarkMode: (state) => {
       state.preferences.darkMode = !state.preferences.darkMode
@@ -160,22 +191,47 @@ const userSlice = createSlice({
     setProfile: (state, action: PayloadAction<UserState['profile']>) => {
       state.profile = action.payload
       state.isAuthenticated = !!action.payload
-      
+
       // Save to localStorage for persistence
       if (typeof window !== 'undefined') {
         if (action.payload) {
           localStorage.setItem('dashboard_current_user', JSON.stringify(action.payload))
+
+          // Load user-specific data when signing in
+          const userData = getUserData(action.payload.email)
+          state.favorites = userData.favorites
+          state.searchHistory = userData.searchHistory
+          state.preferences = userData.preferences
         } else {
           localStorage.removeItem('dashboard_current_user')
         }
       }
     },
     logout: (state) => {
+      // Save current user data before logout
+      if (state.profile?.email) {
+        saveUserData(state.profile.email, {
+          favorites: state.favorites,
+          searchHistory: state.searchHistory,
+          preferences: state.preferences
+        })
+      }
+
+      // Reset state to initial values
       state.profile = null
       state.isAuthenticated = false
       state.favorites = []
       state.searchHistory = []
-      
+      state.preferences = {
+        categories: ['technology', 'business', 'entertainment'],
+        language: 'en',
+        country: 'us',
+        darkMode: true,
+        notifications: true,
+        autoRefresh: false,
+        pageSize: 20,
+      }
+
       // Clear from localStorage
       if (typeof window !== 'undefined') {
         localStorage.removeItem('dashboard_current_user')
