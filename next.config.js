@@ -13,6 +13,20 @@ const nextConfig = {
     NEWS_API_KEY: process.env.NEWS_API_KEY,
     TMDB_API_KEY: process.env.TMDB_API_KEY,
   },
+  // Allow cross-origin requests for development
+  async headers() {
+    return [
+      {
+        source: '/_next/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+        ],
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

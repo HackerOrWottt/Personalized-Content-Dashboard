@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   description: 'A dynamic dashboard for personalized content tracking and interaction',
   keywords: ['dashboard', 'content', 'news', 'recommendations', 'social media'],
   authors: [{ name: 'Abhishek Varma' }],
-  viewport: 'width=device-width, initial-scale=1',
 }
 
 export default function RootLayout({
@@ -20,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={`${inter.className} bg-dark-bg text-dark-text`}>
         <Providers>
           {children}
