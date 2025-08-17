@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { migrateUserData } from '@/utils/user-data-migration'
 
 export interface UserPreferences {
   categories: string[]
