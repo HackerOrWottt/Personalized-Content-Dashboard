@@ -38,13 +38,21 @@ const initialState: UserState = {
   profile: null,
 }
 
+// User data structure for persistence
+interface UserData {
+  email: string
+  favorites: string[]
+  searchHistory: string[]
+  preferences: UserPreferences
+}
+
 // Initialize demo account if it doesn't exist
 const initializeDemoAccount = () => {
   if (typeof window !== 'undefined') {
     try {
       const users = JSON.parse(localStorage.getItem('dashboard_users') || '[]')
       const demoUser = users.find((u: any) => u.email === 'demo@example.com')
-      
+
       if (!demoUser) {
         users.push({
           name: 'Demo User',
@@ -55,6 +63,49 @@ const initializeDemoAccount = () => {
       }
     } catch (error) {
       console.log('Error initializing demo account:', error)
+    }
+  }
+}
+
+// Save user-specific data to localStorage
+const saveUserData = (email: string, data: Partial<UserData>) => {
+  if (typeof window !== 'undefined') {
+    try {
+      const userData = getUserData(email)
+      const updatedData = { ...userData, ...data, email }
+      localStorage.setItem(`dashboard_user_data_${email}`, JSON.stringify(updatedData))
+    } catch (error) {
+      console.log('Error saving user data:', error)
+    }
+  }
+}
+
+// Load user-specific data from localStorage
+const getUserData = (email: string): UserData => {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem(`dashboard_user_data_${email}`)
+      if (saved) {
+        return JSON.parse(saved)
+      }
+    } catch (error) {
+      console.log('Error loading user data:', error)
+    }
+  }
+
+  // Return default data if nothing saved
+  return {
+    email,
+    favorites: [],
+    searchHistory: [],
+    preferences: {
+      categories: ['technology', 'business', 'entertainment'],
+      language: 'en',
+      country: 'us',
+      darkMode: true,
+      notifications: true,
+      autoRefresh: false,
+      pageSize: 20,
     }
   }
 }
