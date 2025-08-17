@@ -101,14 +101,16 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     
     saveUser(newUser)
 
-    // Auto sign in after signup
-    dispatch(setProfile({
-      name: newUser.name,
-      email: newUser.email
-    }))
-
+    // Switch to sign in mode after successful signup
     setIsLoading(false)
-    onClose()
+    setMode('signin')
+    setFormData({ name: '', email: formData.email, password: '', confirmPassword: '' })
+    setErrors({})
+
+    // Show success message
+    setErrors({
+      success: `Account created successfully! Please sign in with your credentials.`
+    })
   }
 
   const handleSignIn = async () => {
