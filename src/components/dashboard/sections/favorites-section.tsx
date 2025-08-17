@@ -1,16 +1,22 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useAppSelector } from '@/store/hooks'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { setActiveSection } from '@/store/slices/uiSlice'
 import { ContentCard } from '../content-card'
 import { Button } from '@/components/ui/button'
 
 export function FavoritesSection() {
+  const dispatch = useAppDispatch()
   const favorites = useAppSelector((state) => state.user.favorites)
   const { personalizedFeed } = useAppSelector((state) => state.content)
 
   // Filter content to show only favorites
   const favoriteContent = personalizedFeed.filter(item => favorites.includes(item.id))
+
+  const handleBackToHome = () => {
+    dispatch(setActiveSection('home'))
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -29,6 +35,22 @@ export function FavoritesSection() {
 
   return (
     <div className="p-6">
+      {/* Navigation Header */}
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={handleBackToHome}
+          className="text-dark-muted hover:text-accent-red mb-4"
+          leftIcon={
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          }
+        >
+          Back to Dashboard Home
+        </Button>
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <motion.h1
@@ -118,10 +140,7 @@ export function FavoritesSection() {
             Start adding content to your favorites by clicking the heart icon on any content card.
           </p>
           <Button
-            onClick={() => {
-              // Navigate to feed section
-              window.location.hash = '#feed'
-            }}
+            onClick={() => dispatch(setActiveSection('feed'))}
           >
             Browse Content
           </Button>

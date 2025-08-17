@@ -7,7 +7,7 @@ import { useGetTopHeadlinesQuery } from '@/store/api/newsApi'
 import { useGetTrendingMoviesQuery } from '@/store/api/tmdbApi'
 import { useGetSocialPostsQuery } from '@/store/api/socialApi'
 import { setPersonalizedFeed, setLoading } from '@/store/slices/contentSlice'
-import { addNotification } from '@/store/slices/uiSlice'
+import { setActiveSection } from '@/store/slices/uiSlice'
 import { ContentCard } from '../content-card'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Button } from '@/components/ui/button'
@@ -51,6 +51,10 @@ export function PersonalizedFeed() {
     }
   }, [dispatch, newsData, moviesData, socialData])
 
+  const handleBackToHome = () => {
+    dispatch(setActiveSection('home'))
+  }
+
   if (isLoading && personalizedFeed.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -64,6 +68,22 @@ export function PersonalizedFeed() {
 
   return (
     <div className="p-6">
+      {/* Navigation Header */}
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={handleBackToHome}
+          className="text-dark-muted hover:text-accent-red mb-4"
+          leftIcon={
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          }
+        >
+          Back to Dashboard Home
+        </Button>
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <motion.h1

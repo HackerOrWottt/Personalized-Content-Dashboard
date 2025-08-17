@@ -1,6 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useAppDispatch } from '@/store/hooks'
+import { setActiveSection } from '@/store/slices/uiSlice'
 import { useGetTrendingMoviesQuery } from '@/store/api/tmdbApi'
 import { useGetTrendingSocialQuery } from '@/store/api/socialApi'
 import { ContentCard } from '../content-card'
@@ -8,11 +10,16 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Button } from '@/components/ui/button'
 
 export function TrendingSection() {
+  const dispatch = useAppDispatch()
   const { data: moviesData, isLoading: moviesLoading } = useGetTrendingMoviesQuery({ page: 1 })
   const { data: socialData, isLoading: socialLoading } = useGetTrendingSocialQuery({ page: 1, pageSize: 15 })
 
   const isLoading = moviesLoading || socialLoading
   const trendingContent = [...(moviesData?.slice(0, 10) || []), ...(socialData || [])]
+
+  const handleBackToHome = () => {
+    dispatch(setActiveSection('home'))
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -42,6 +49,22 @@ export function TrendingSection() {
 
   return (
     <div className="p-6">
+      {/* Navigation Header */}
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={handleBackToHome}
+          className="text-dark-muted hover:text-accent-red mb-4"
+          leftIcon={
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          }
+        >
+          Back to Dashboard Home
+        </Button>
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <motion.h1
