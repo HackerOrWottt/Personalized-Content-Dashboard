@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface UIState {
   sidebarOpen: boolean
-  activeSection: 'feed' | 'trending' | 'favorites' | 'search'
+  activeSection: 'home' | 'feed' | 'trending' | 'favorites' | 'search'
   mobileMenuOpen: boolean
   settingsModalOpen: boolean
   searchModalOpen: boolean
@@ -18,7 +18,7 @@ export interface UIState {
 
 const initialState: UIState = {
   sidebarOpen: true,
-  activeSection: 'feed',
+  activeSection: 'home',
   mobileMenuOpen: false,
   settingsModalOpen: false,
   searchModalOpen: false,

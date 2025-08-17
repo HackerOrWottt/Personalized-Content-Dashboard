@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppSelector } from '@/store/hooks'
+import { HomeOverview } from './sections/home-overview'
 import { PersonalizedFeed } from './sections/personalized-feed'
 import { TrendingSection } from './sections/trending-section'
 import { FavoritesSection } from './sections/favorites-section'
@@ -12,6 +13,8 @@ export function DashboardContent() {
 
   const renderActiveSection = () => {
     switch (activeSection) {
+      case 'home':
+        return <HomeOverview />
       case 'feed':
         return <PersonalizedFeed />
       case 'trending':
@@ -21,7 +24,7 @@ export function DashboardContent() {
       case 'search':
         return <SearchSection />
       default:
-        return <PersonalizedFeed />
+        return <HomeOverview />
     }
   }
 
