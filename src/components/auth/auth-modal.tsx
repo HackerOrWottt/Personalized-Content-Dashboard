@@ -217,6 +217,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </p>
               </div>
 
+              {/* Success Message */}
+              {errors.success && (
+                <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded-lg">
+                  <p className="text-green-800 text-sm text-center">{errors.success}</p>
+                </div>
+              )}
+
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 {mode === 'signup' && (
