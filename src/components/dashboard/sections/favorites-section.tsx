@@ -175,6 +175,19 @@ export function FavoritesSection() {
             </motion.div>
           ))}
         </motion.div>
+      ) : favorites.length > 0 ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🔍</div>
+          <h3 className="text-xl font-semibold text-dark-text mb-2">Favorites not found</h3>
+          <p className="text-dark-muted mb-4">
+            Some of your favorited content might no longer be available.
+          </p>
+          <Button
+            onClick={() => dispatch(setActiveSection('feed'))}
+          >
+            Browse New Content
+          </Button>
+        </div>
       ) : (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">❤️</div>
