@@ -5,6 +5,10 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { setActiveSection } from '@/store/slices/uiSlice'
 import { ContentCard } from '../content-card'
 import { Button } from '@/components/ui/button'
+import { useGetTopHeadlinesQuery } from '@/store/api/newsApi'
+import { useGetTrendingMoviesQuery } from '@/store/api/tmdbApi'
+import { useGetSocialPostsQuery } from '@/store/api/socialApi'
+import { ContentItem } from '@/types'
 
 export function FavoritesSection() {
   const dispatch = useAppDispatch()
