@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { addToFavorites, removeFromFavorites } from '@/store/slices/userSlice'
 import { Card } from '@/components/ui/card'
@@ -19,6 +18,7 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
   const dispatch = useAppDispatch()
   const favorites = useAppSelector((state) => state.user.favorites)
   const [imageError, setImageError] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
 
   const isFavorite = favorites.includes(item.id)
 
@@ -36,6 +36,16 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
     }
   }
 
+  const handleImageLoad = () => {
+    setImageLoading(false)
+    setImageError(false)
+  }
+
+  const handleImageError = () => {
+    setImageLoading(false)
+    setImageError(true)
+  }
+
   return (
     <motion.div
       whileHover={{ y: -4 }}
@@ -46,13 +56,20 @@ export function ContentCard({ item, isDraggable = false }: ContentCardProps) {
         {/* Image */}
         <div className="relative h-48 bg-dark-bg overflow-hidden">
           {item.imageUrl && !imageError ? (
-            <Image
-              src={item.imageUrl}
-              alt={item.title}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              onError={() => setImageError(true)}
-            />
+            <>
+              {imageLoading && (
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-red"></div>
+                </div>
+              )}
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+              />
+            </>
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
               <div className="text-center">
