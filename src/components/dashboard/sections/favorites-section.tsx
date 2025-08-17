@@ -9,7 +9,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useGetTopHeadlinesQuery } from '@/store/api/newsApi'
 import { useGetTrendingMoviesQuery } from '@/store/api/tmdbApi'
 import { useGetSocialPostsQuery } from '@/store/api/socialApi'
-import { ContentItem } from '@/types'
+import { ContentItem } from '@/store/slices/contentSlice'
 
 export function FavoritesSection() {
   const dispatch = useAppDispatch()
