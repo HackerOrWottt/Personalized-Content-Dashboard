@@ -57,8 +57,8 @@ export function DraggableContentGrid({ items, onReorder }: DraggableContentGridP
                 {(provided, snapshot) => (
                   <motion.div
                     ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+                    {...(provided.draggableProps as any)}
+                    {...(provided.dragHandleProps as any)}
                     className={`${snapshot.isDragging ? 'rotate-3 scale-105 z-50' : ''} transition-all duration-200`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
