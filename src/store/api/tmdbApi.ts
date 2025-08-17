@@ -1,14 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ContentItem } from '../slices/contentSlice'
 
-// Mock movie data for demo purposes
+// Mock movie data with SVG data URLs instead of external images
 const mockMovieData = [
   {
     id: 'movie_1',
     type: 'movie' as const,
     title: 'Quantum Horizons',
     description: 'A thrilling sci-fi adventure exploring the boundaries of quantum physics and human consciousness in a dystopian future.',
-    imageUrl: 'https://via.placeholder.com/500x750/7c3aed/ffffff?text=Quantum+Horizons',
+    imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjN2MzYWVkIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI0NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5RdWFudHVtPC90ZXh0PgogIDx0ZXh0IHg9IjUwJSIgeT0iNTUlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzYiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SG9yaXpvbnM8L3RleHQ+Cjwvc3ZnPg==',
     url: 'https://www.themoviedb.org/movie/1',
     publishedAt: '2024-01-15',
     source: 'TMDB',
@@ -20,7 +20,7 @@ const mockMovieData = [
     type: 'movie' as const,
     title: 'The Digital Divide',
     description: 'A gripping drama about technology\'s impact on human relationships in the modern world.',
-    imageUrl: 'https://via.placeholder.com/500x750/dc2626/ffffff?text=Digital+Divide',
+    imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGMyNjI2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI0MyUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5EaWdpdGFsPC90ZXh0PgogIDx0ZXh0IHg9IjUwJSIgeT0iNTciIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5EaXZpZGU8L3RleHQ+Cjwvc3ZnPg==',
     url: 'https://www.themoviedb.org/movie/2',
     publishedAt: '2024-02-20',
     source: 'TMDB',
@@ -32,7 +32,7 @@ const mockMovieData = [
     type: 'movie' as const,
     title: 'Neon Nights',
     description: 'An action-packed cyberpunk thriller set in a neon-lit metropolis where hackers fight for freedom.',
-    imageUrl: 'https://via.placeholder.com/500x750/059669/ffffff?text=Neon+Nights',
+    imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDU5NjY5Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI0NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5OZW9uPC90ZXh0PgogIDx0ZXh0IHg9IjUwJSIgeT0iNTUlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzYiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+TmlnaHRzPC90ZXh0Pgo8L3N2Zz4=',
     url: 'https://www.themoviedb.org/movie/3',
     publishedAt: '2024-03-10',
     source: 'TMDB',

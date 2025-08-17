@@ -1,17 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['image.tmdb.org', 'newsapi.org', 'via.placeholder.com'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'image.tmdb.org',
+        port: '',
+        pathname: '/t/p/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        port: '',
+        pathname: '/**',
       },
     ],
+    unoptimized: true, // Disable image optimization for development
   },
   env: {
-    NEWS_API_KEY: process.env.NEWS_API_KEY,
-    TMDB_API_KEY: process.env.TMDB_API_KEY,
+    NEXT_PUBLIC_NEWS_API_KEY: process.env.NEXT_PUBLIC_NEWS_API_KEY,
+    NEXT_PUBLIC_TMDB_API_KEY: process.env.NEXT_PUBLIC_TMDB_API_KEY,
   },
   // Allow cross-origin requests for development
   async headers() {

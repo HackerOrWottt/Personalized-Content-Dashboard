@@ -1,6 +1,18 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ContentItem } from '../slices/contentSlice'
 
+// Generate SVG data URL for social post placeholders
+const generateSocialImageSVG = (postNumber: number): string => {
+  const colors = ['#dc2626', '#059669', '#7c3aed', '#ea580c', '#0891b2']
+  const color = colors[postNumber % colors.length]
+  const svg = `<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="${color}"/>
+    <text x="50%" y="45%" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" dy=".3em">Social</text>
+    <text x="50%" y="55%" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" dy=".3em">Post ${postNumber}</text>
+  </svg>`
+  return `data:image/svg+xml;base64,${btoa(svg)}`
+}
+
 // Mock social media data generator
 const generateMockSocialPosts = (count: number = 20, hashtag?: string): ContentItem[] => {
   const mockPosts: ContentItem[] = []
@@ -25,7 +37,7 @@ const generateMockSocialPosts = (count: number = 20, hashtag?: string): ContentI
       type: 'social' as const,
       title: `${randomText} ${randomHashtag}`,
       description: `This is a mock social media post about ${randomHashtag}. In a real implementation, this would be fetched from Twitter, Instagram, or other social media APIs.`,
-      imageUrl: Math.random() > 0.5 ? `https://via.placeholder.com/400x300?text=Social+Post+${i + 1}` : undefined,
+      imageUrl: Math.random() > 0.3 ? generateSocialImageSVG(i + 1) : undefined,
       url: `https://example.com/post/${i + 1}`,
       publishedAt: new Date(Date.now() - Math.random() * 86400000 * 7).toISOString(), // Random time within last week
       source: 'Social Media',
@@ -55,7 +67,7 @@ export const socialApi = createApi({
             const paginatedPosts = allPosts.slice(startIndex, startIndex + pageSize)
             
             resolve({ data: paginatedPosts })
-          }, 500)
+          }, 300)
         })
       },
       providesTags: ['Social'],
@@ -69,7 +81,7 @@ export const socialApi = createApi({
             trendingPosts.sort(() => Math.random() - 0.5)
             
             resolve({ data: trendingPosts })
-          }, 300)
+          }, 200)
         })
       },
       providesTags: ['Social'],
@@ -86,7 +98,7 @@ export const socialApi = createApi({
             )
             
             resolve({ data: filteredResults })
-          }, 400)
+          }, 250)
         })
       },
       providesTags: ['Social'],

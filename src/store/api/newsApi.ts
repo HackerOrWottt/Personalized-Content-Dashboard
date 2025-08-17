@@ -1,14 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ContentItem } from '../slices/contentSlice'
 
-// Mock news data for demo purposes
+// Mock news data with SVG data URLs instead of external images
 const mockNewsData = [
   {
     id: 'news_1',
     type: 'news' as const,
     title: 'Latest Tech Innovations Transform Digital Landscape',
     description: 'Breakthrough technologies including AI, quantum computing, and blockchain are reshaping industries worldwide.',
-    imageUrl: 'https://via.placeholder.com/400x300/dc2626/ffffff?text=Tech+News',
+    imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGMyNjI2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5UZWNoIE5ld3M8L3RleHQ+Cjwvc3ZnPg==',
     url: 'https://example.com/tech-news-1',
     publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     source: 'TechDaily',
@@ -20,7 +20,7 @@ const mockNewsData = [
     type: 'news' as const,
     title: 'Global Markets React to Economic Policy Changes',
     description: 'Stock markets worldwide show mixed reactions to new economic policies announced by major governments.',
-    imageUrl: 'https://via.placeholder.com/400x300/059669/ffffff?text=Business+News',
+    imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDU5NjY5Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5CdXNpbmVzcyBOZXdzPC90ZXh0Pgo8L3N2Zz4=',
     url: 'https://example.com/business-news-1',
     publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
     source: 'Business Weekly',
@@ -32,7 +32,7 @@ const mockNewsData = [
     type: 'news' as const,
     title: 'Health Breakthrough: New Treatment Shows Promise',
     description: 'Researchers announce promising results from clinical trials of innovative medical treatment.',
-    imageUrl: 'https://via.placeholder.com/400x300/dc2626/ffffff?text=Health+News',
+    imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGMyNjI2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5IZWFsdGggTmV3czwvdGV4dD4KPC9zdmc+',
     url: 'https://example.com/health-news-1',
     publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
     source: 'Health Today',
