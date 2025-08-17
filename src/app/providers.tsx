@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '@/store'
+import { ErrorBoundary } from '@/components/error-boundary'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -21,10 +22,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <Provider store={store}>
-      <div className="dark">
-        {children}
-      </div>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <div className="dark">
+          {children}
+        </div>
+      </Provider>
+    </ErrorBoundary>
   )
 }
