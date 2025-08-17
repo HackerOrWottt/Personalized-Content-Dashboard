@@ -31,6 +31,16 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
+  // Reset modal state when opened
+  React.useEffect(() => {
+    if (isOpen) {
+      setMode('signin')
+      setFormData({ name: '', email: '', password: '', confirmPassword: '' })
+      setErrors({})
+      setIsLoading(false)
+    }
+  }, [isOpen])
+
   // Simple local storage based authentication (in production, use proper backend)
   const getUsers = (): User[] => {
     try {
