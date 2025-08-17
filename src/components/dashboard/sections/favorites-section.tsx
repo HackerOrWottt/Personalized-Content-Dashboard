@@ -16,19 +16,21 @@ export function FavoritesSection() {
   const { personalizedFeed } = useAppSelector((state) => state.content)
 
   // Fetch content from all sources to ensure favorites are available
-  const { data: newsData = [] } = useGetTopHeadlinesQuery({
+  const { data: newsData = [], isLoading: newsLoading } = useGetTopHeadlinesQuery({
     category: 'general',
     pageSize: 20,
     country: 'us'
   })
 
-  const { data: moviesData = [] } = useGetTrendingMoviesQuery({
+  const { data: moviesData = [], isLoading: moviesLoading } = useGetTrendingMoviesQuery({
     timeWindow: 'day'
   })
 
-  const { data: socialData = [] } = useGetSocialPostsQuery({
+  const { data: socialData = [], isLoading: socialLoading } = useGetSocialPostsQuery({
     limit: 20
   })
+
+  const isLoading = newsLoading || moviesLoading || socialLoading
 
   // Combine all content sources
   const allContent: ContentItem[] = [
