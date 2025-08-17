@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ContentItem } from '../slices/contentSlice'
+import { enhancedFetch, logError, getUserFriendlyErrorMessage } from '@/utils/error-handler'
 
 // Mock news data with SVG data URLs instead of external images
 const mockNewsData = [
@@ -70,10 +71,11 @@ export const newsApi = createApi({
           
           if (!apiKey || apiKey === 'demo_key') {
             // Return mock data when no API key is available
+            await new Promise(resolve => setTimeout(resolve, 500)) // Simulate network delay
             return { data: mockNewsData.filter(item => item.category === category || category === 'general') }
           }
 
-          const response = await fetch(
+          const response = await enhancedFetch(
             `https://newsapi.org/v2/top-headlines?category=${category}&country=${country}&page=${page}&pageSize=${pageSize}`,
             {
               headers: {
@@ -81,10 +83,6 @@ export const newsApi = createApi({
               },
             }
           )
-
-          if (!response.ok) {
-            throw new Error('API request failed')
-          }
 
           const data = await response.json()
           const transformedData = data.articles.map((article: any, index: number) => ({
@@ -102,6 +100,7 @@ export const newsApi = createApi({
 
           return { data: transformedData }
         } catch (error) {
+          logError(error as Error, 'News API - Top Headlines')
           // Fallback to mock data on error
           return { data: mockNewsData.filter(item => item.category === category || category === 'general') }
         }
@@ -115,6 +114,7 @@ export const newsApi = createApi({
           
           if (!apiKey || apiKey === 'demo_key') {
             // Return filtered mock data
+            await new Promise(resolve => setTimeout(resolve, 300))
             const filtered = mockNewsData.filter(item => 
               item.title.toLowerCase().includes(q.toLowerCase()) ||
               item.description.toLowerCase().includes(q.toLowerCase())
@@ -122,7 +122,7 @@ export const newsApi = createApi({
             return { data: filtered }
           }
 
-          const response = await fetch(
+          const response = await enhancedFetch(
             `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&page=${page}&pageSize=${pageSize}&sortBy=relevancy`,
             {
               headers: {
@@ -130,10 +130,6 @@ export const newsApi = createApi({
               },
             }
           )
-
-          if (!response.ok) {
-            throw new Error('API request failed')
-          }
 
           const data = await response.json()
           const transformedData = data.articles.map((article: any, index: number) => ({
@@ -150,6 +146,7 @@ export const newsApi = createApi({
 
           return { data: transformedData }
         } catch (error) {
+          logError(error as Error, 'News API - Search')
           // Fallback to filtered mock data
           const filtered = mockNewsData.filter(item => 
             item.title.toLowerCase().includes(q.toLowerCase()) ||
