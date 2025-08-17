@@ -153,7 +153,12 @@ export function FavoritesSection() {
       </div>
 
       {/* Content Grid */}
-      {favoriteContent.length > 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center py-12">
+          <LoadingSpinner size="lg" />
+          <span className="ml-3 text-dark-muted">Loading your favorites...</span>
+        </div>
+      ) : favoriteContent.length > 0 ? (
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={containerVariants}
