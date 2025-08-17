@@ -119,6 +119,9 @@ const userSlice = createSlice({
       // Initialize demo account
       initializeDemoAccount()
 
+      // Run data migration for backwards compatibility
+      migrateUserData()
+
       // Check if user was previously logged in
       if (typeof window !== 'undefined') {
         try {
