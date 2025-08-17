@@ -15,8 +15,39 @@ export function FavoritesSection() {
   const favorites = useAppSelector((state) => state.user.favorites)
   const { personalizedFeed } = useAppSelector((state) => state.content)
 
-  // Filter content to show only favorites
-  const favoriteContent = personalizedFeed.filter(item => favorites.includes(item.id))
+  // Fetch content from all sources to ensure favorites are available
+  const { data: newsData = [] } = useGetTopHeadlinesQuery({
+    category: 'general',
+    pageSize: 20,
+    country: 'us'
+  })
+
+  const { data: moviesData = [] } = useGetTrendingMoviesQuery({
+    timeWindow: 'day'
+  })
+
+  const { data: socialData = [] } = useGetSocialPostsQuery({
+    limit: 20
+  })
+
+  // Combine all content sources
+  const allContent: ContentItem[] = [
+    ...personalizedFeed,
+    ...newsData,
+    ...moviesData,
+    ...socialData
+  ]
+
+  // Remove duplicates and filter to show only favorites
+  const uniqueContent = allContent.reduce((acc: ContentItem[], current) => {
+    const exists = acc.find(item => item.id === current.id)
+    if (!exists) {
+      acc.push(current)
+    }
+    return acc
+  }, [])
+
+  const favoriteContent = uniqueContent.filter(item => favorites.includes(item.id))
 
   const handleBackToHome = () => {
     dispatch(setActiveSection('home'))
